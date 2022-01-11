@@ -4,7 +4,7 @@ for iOS Devices. The purpose of the game is to match two identical card and incr
 
 # Features 
 
-- There is 20 in the game
+- There is 20 Card in the game
 ![1](https://user-images.githubusercontent.com/95629092/148929192-ac02d563-5dbc-4bc5-9e0e-275b27a5a826.png)
 
 - “Restart” Button, which ends current game and begins a brand new game 
