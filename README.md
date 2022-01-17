@@ -32,7 +32,7 @@ for iOS Devices. The purpose of the game is to match two identical card and incr
 - Swift 5.5
 
 # Architecture
-- MVC 
+- MVVM 
 
 # Assignment 
 - You can see the instructions [here](https://drive.google.com/drive/folders/14uxqi3ewCM2wvpwBY8nhkEa7ZLq7LXVu): (Programming Project 1_ Concentration.pdf)
