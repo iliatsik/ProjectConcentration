@@ -9,44 +9,51 @@ import Foundation
 
 class Concentration {
     
-    var cards = [Card]()
+    var cardList = [Card]()
     
     var indexOfOneAndOnlyCard : Int?
-    
+
     var scoreCount = 0
     
     func chooseCard(at index: Int){
-        if !cards[index].isMatched {
+        //It's a declaration of cards, we are implement these statements, while cards aren't matching, just to define the exact score
+
+        guard cardList[index].isMatched else {
             if let matchIndex = indexOfOneAndOnlyCard, matchIndex != index {
-                if cards[matchIndex].identifier == cards[index].identifier {
-                    cards[matchIndex].isMatched = true
-                    cards[index].isMatched = true
+                if cardList[matchIndex].identifier == cardList[index].identifier {
+                    //If cards matched, then we will assign boolean isMatched to true and we will update score label and add two point
+                    cardList[matchIndex].isMatched = true
+                    cardList[index].isMatched = true
                     scoreCount += 2
-                } else if cards[index].cardFlipCount > 0 || cards[matchIndex].cardFlipCount > 0 {
+                } else if cardList[index].cardFlipCount > 0 || cardList[matchIndex].cardFlipCount > 0 {
+                    //If we repeat and tap same card, score will be decreased by one point
                     scoreCount -= 1
                 }
-                cards[index].isFaceUp = true
-                cards[index].cardFlipCount += 1
-                cards[matchIndex].cardFlipCount += 1
+                cardList[index].isFaceUp = true
+                //Here we mark used cards
+                cardList[index].cardFlipCount += 1
+                cardList[matchIndex].cardFlipCount += 1
                 indexOfOneAndOnlyCard = nil
             } else {
-                for flipDownIndex in cards.indices {
-                    cards[flipDownIndex].isFaceUp = false
+                for flipDownIndex in cardList.indices {
+                    //Hides emojis
+                    cardList[flipDownIndex].isFaceUp = false
                 }
-                cards[index].isFaceUp = true
+                cardList[index].isFaceUp = true
                 indexOfOneAndOnlyCard = index
             }
+            return
         }
     }
     
     func shuffleCards() {
-        cards.shuffle()
+        cardList.shuffle()
     }
     
     init(numberOfPairsOfCard : Int){
         for _ in 0..<numberOfPairsOfCard {
             let card = Card()
-            cards += [card, card]
+            cardList += [card, card]
         }
         shuffleCards()
     }

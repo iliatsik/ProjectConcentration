@@ -9,5 +9,5 @@ import UIKit
 
 struct Theme {
     var cardColor: UIColor
-    var emoji: [String]
+    var emojiList: [String]
 }

@@ -9,7 +9,8 @@ import UIKit
 
 class ViewController: UIViewController {
 
-    private lazy var game = Concentration(numberOfPairsOfCard: (cardButtons.count + 1 ) / 2)
+    private var concentrationViewModel : ConcentrationViewModel!
+    
     private var flipCount = 0 {
         didSet{
             flipCountLabel.text = "Flips: \(flipCount)"
@@ -24,7 +25,6 @@ class ViewController: UIViewController {
 
     private var randomIndexOfEmoji = 0
     private var randomColor = UIColor()
-    private var emojiChoices = [String]()
     
     @IBOutlet private var cardButtons: [UIButton]!
     @IBOutlet private weak var scoreCountLabel: UILabel!
@@ -33,21 +33,35 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        restartLabel.layer.cornerRadius = 18
-        scoreCountLabel.layer.masksToBounds = true
-        scoreCountLabel.layer.cornerRadius = 18
-        flipCountLabel.layer.masksToBounds = true
-        flipCountLabel.layer.cornerRadius = 18
+        implementViewModel()
+        updateUI()
         interfaceImplementation()
     }
     
+    private func implementViewModel() {
+        self.concentrationViewModel = ConcentrationViewModel(quantity: (cardButtons.count + 1) / 2)
+    }
+    
+    private func updateUI() {
+        restartLabel.layer.cornerRadius =
+            UIRelated.labelCornerRadius.rawValue
+        scoreCountLabel.layer.masksToBounds = true
+        scoreCountLabel.layer.cornerRadius = UIRelated.labelCornerRadius.rawValue
+        flipCountLabel.layer.masksToBounds = true
+        flipCountLabel.layer.cornerRadius = UIRelated.labelCornerRadius.rawValue
+    }
     @IBAction private func touchRestart(_ sender: UIButton) {
+        //Chooses random theme
         interfaceImplementation()
-        game.cards.removeAll()
-        emoji.removeAll()
-        game = Concentration(numberOfPairsOfCard: (cardButtons.count + 1 ) / 2)
+        //Removes current games card implementation and emojis
+        concentrationViewModel.game.cardList.removeAll()
+        concentrationViewModel.emoji.removeAll()
+        //Assigns the quantity of the cards
+        concentrationViewModel.game = Concentration(numberOfPairsOfCard: (cardButtons.count + 1 ) / 2)
+        //Button Implementation
         updateViewFromModel()
-        game.shuffleCards()
+        //Card Shuffle
+        concentrationViewModel.game.shuffleCards()
         flipCount = 0
         scoreCount = 0
     }
@@ -55,9 +69,9 @@ class ViewController: UIViewController {
     @IBAction private func touchCard(_ sender: UIButton) {
         flipCount += 1
         if let cardNumber = cardButtons.firstIndex(of: sender) {
-            game.chooseCard(at: cardNumber)
+            concentrationViewModel.game.chooseCard(at: cardNumber)
             updateViewFromModel()
-            scoreCount = game.scoreCount
+            scoreCount = concentrationViewModel.game.scoreCount
         } else {
             print("error")
         }
@@ -66,16 +80,17 @@ class ViewController: UIViewController {
     private func updateViewFromModel() {
         for index in cardButtons.indices {
             let button = cardButtons[index]
-            let card = game.cards[index]
+            let card = concentrationViewModel.game.cardList[index]
             if card.isFaceUp {
-                button.setTitle(emoji(for: card), for: .normal)
-                button.titleLabel?.font = .systemFont(ofSize: 60)
+                button.setTitle(concentrationViewModel.emoji(for: card), for: .normal)
+                button.titleLabel?.font = .systemFont(ofSize: UIRelated.labelFontSize.rawValue)
                 button.backgroundColor = .white
                 button.isEnabled = false
             } else {
                 button.setTitle("", for: .normal)
                 button.backgroundColor = card.isMatched ? .clear : randomColor
                 button.isEnabled = true
+                if button.backgroundColor == .clear { button.isEnabled = false }
             }
         }
     }
@@ -83,46 +98,29 @@ class ViewController: UIViewController {
     private func interfaceImplementation() {
         randomIndexOfEmoji = randomEmojiGame.count.arc4random
         randomColor = randomEmojiGame[randomIndexOfEmoji].cardColor
-        emojiChoices = randomEmojiGame[randomIndexOfEmoji].emoji
+        concentrationViewModel.emojiChoices = randomEmojiGame[randomIndexOfEmoji].emojiList
         restartLabel.backgroundColor = randomColor
         scoreCountLabel.backgroundColor = randomColor
         flipCountLabel.backgroundColor = randomColor
         for button in cardButtons {
-            button.layer.cornerRadius = 12
+            button.layer.cornerRadius = UIRelated.buttonCornerRadius.rawValue
             button.backgroundColor = randomColor
         }
     }
     
     private lazy var randomEmojiGame = [animalEmojiChoices, flagEmojiChoices, foodEmojiChoices]
     
-    private var animalEmojiChoices = Theme(cardColor: .systemOrange, emoji:
+    private let animalEmojiChoices = Theme(cardColor: .systemOrange, emojiList:
         ["🐝","🐒","🐍","🦂","🦕","🦞","🪱", "🦃","🐋","🦌","🦚","🐩","🦒","🐕‍🦺","🦤","🦔"])
-    private var flagEmojiChoices = Theme(cardColor: .systemGreen, emoji: ["🇧🇷","🇧🇪","🇬🇪","🇩🇪","🇪🇸","🇺🇸","🏴󠁧󠁢󠁷󠁬󠁳󠁿","🏴󠁧󠁢󠁳󠁣󠁴󠁿","🇿🇦","🇳🇴","🇳🇿","🇲🇽","🇮🇹","🇯🇵","🇮🇩","🇬🇷"])
-    private var foodEmojiChoices = Theme(cardColor: .systemPurple, emoji:
+    private let flagEmojiChoices = Theme(cardColor: .systemGreen, emojiList: ["🇧🇷","🇧🇪","🇬🇪","🇩🇪","🇪🇸","🇺🇸","🏴󠁧󠁢󠁷󠁬󠁳󠁿","🏴󠁧󠁢󠁳󠁣󠁴󠁿","🇿🇦","🇳🇴","🇳🇿","🇲🇽","🇮🇹","🇯🇵","🇮🇩","🇬🇷"])
+    private let foodEmojiChoices = Theme(cardColor: .systemPurple, emojiList:
         ["🍏","🍎","🍐","🍇","🍒","🍓","🥐","🍗","🫑","🧀","🥑","🧁","🍫","🍿","🥗","🫐"])
     
-
-    private var emoji = [Int:String]()
-    
-    private func emoji(for card: Card) -> String{
-        if emoji[card.identifier] == nil, emojiChoices.count > 0 {
-            let randomIndex = emojiChoices.count.arc4random 
-            emoji[card.identifier] = emojiChoices.remove(at: randomIndex)
-        }
-        return emoji[card.identifier] ?? "?"
-    }
 }
 
-extension Int {
-    
-    var arc4random: Int {
-        if self > 0 {
-            return Int(arc4random_uniform(UInt32(self)))
-        } else if self < 0 {
-            return -Int(arc4random_uniform(UInt32(abs(self))))
-        } else {
-            return 0
-        }
-    }
-    
+
+enum UIRelated : CGFloat {
+    case labelCornerRadius = 18
+    case buttonCornerRadius = 12
+    case labelFontSize = 60
 }

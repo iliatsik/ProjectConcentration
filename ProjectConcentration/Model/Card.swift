@@ -10,17 +10,13 @@ import Foundation
 struct Card {
     var isFaceUp = false
     var isMatched = false
-    var identifier : Int
+    var identifier = Card.getUniqueIdentifier()
     var cardFlipCount = 0
-
-    static var identifierFactory = 0
     
     static func getUniqueIdentifier() -> Int {
-        identifierFactory += 1
-        return identifierFactory
+        let uuid = UUID().uuidString
+        let numericFormUUID = Int(uuid.hash)
+        return numericFormUUID
     }
     
-    init() {
-        self.identifier = Card.getUniqueIdentifier()
-    }
 }
