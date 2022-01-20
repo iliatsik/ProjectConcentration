@@ -45,10 +45,10 @@ class ViewController: UIViewController {
         let label = UILabel()
         label.backgroundColor = .orange
         label.layer.masksToBounds = true
-        label.layer.cornerRadius = 12
+        label.layer.cornerRadius = UIRelated.buttonCornerRadius.rawValue
         label.text = "Flips: 0"
         label.textAlignment = .center
-        label.font = .boldSystemFont(ofSize: 35.0)
+        label.font = .boldSystemFont(ofSize: UIRelated.boldFontSize.rawValue)
         label.textColor = .black
         return label
     }()
@@ -58,10 +58,10 @@ class ViewController: UIViewController {
         let label = UILabel()
         label.backgroundColor = .orange
         label.layer.masksToBounds = true
-        label.layer.cornerRadius = 12
+        label.layer.cornerRadius = UIRelated.buttonCornerRadius.rawValue
         label.textAlignment = .center
         label.text = "Score: 0"
-        label.font = .boldSystemFont(ofSize: 35.0)
+        label.font = .boldSystemFont(ofSize: UIRelated.boldFontSize.rawValue)
         label.textColor = .black
         return label
     }()
@@ -71,12 +71,12 @@ class ViewController: UIViewController {
         let button = UIButton()
         button.backgroundColor = .orange
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.layer.cornerRadius = 12
+        button.layer.cornerRadius = UIRelated.buttonCornerRadius.rawValue
         button.layer.masksToBounds = true
         button.setTitleColor(.black, for: .normal)
         button.setTitle("Restart", for: .normal)
         button.addTarget(self, action: #selector(restartAction(sender:)), for: .touchUpInside)
-        button.titleLabel?.font = .boldSystemFont(ofSize: 35.0)
+        button.titleLabel?.font = .boldSystemFont(ofSize: UIRelated.boldFontSize.rawValue)
         return button
     }()
     
@@ -86,7 +86,7 @@ class ViewController: UIViewController {
         for _ in 0...19 {
             let button = UIButton()
             button.backgroundColor = .orange
-            button.layer.cornerRadius = 20
+            button.layer.cornerRadius = UIRelated.labelCornerRadius.rawValue
             button.translatesAutoresizingMaskIntoConstraints = false
             button.layer.masksToBounds = true
             button.addTarget(self, action: #selector(buttonAction(sender:)), for: .touchUpInside)
@@ -169,9 +169,9 @@ class ViewController: UIViewController {
             }
             
             //Adjusting restart button's, score and flip label's font size
-            restartButton.titleLabel?.font = .boldSystemFont(ofSize: 35)
-            flipCountLabel.font = .boldSystemFont(ofSize: 35)
-            scoreCountLabel.font = .boldSystemFont(ofSize: 35)
+            restartButton.titleLabel?.font = .boldSystemFont(ofSize: UIRelated.boldFontSize.rawValue)
+            flipCountLabel.font = .boldSystemFont(ofSize: UIRelated.boldFontSize.rawValue)
+            scoreCountLabel.font = .boldSystemFont(ofSize: UIRelated.boldFontSize.rawValue)
             NSLayoutConstraint.activate(compactConstraints)
             
         } else if (traitCollection.horizontalSizeClass == .compact && traitCollection.verticalSizeClass == .compact) {
@@ -183,9 +183,9 @@ class ViewController: UIViewController {
 
             //Adjusting restart button's, score and flip label's font size
             //Adjusting stack view, where we have count and score label, axis mode to vertical from horizontal
-            restartButton.titleLabel?.font = .boldSystemFont(ofSize: 30)
-            flipCountLabel.font = .boldSystemFont(ofSize: 25)
-            scoreCountLabel.font = .boldSystemFont(ofSize: 25)
+            restartButton.titleLabel?.font = .boldSystemFont(ofSize: UIRelated.regularFontSize.rawValue)
+            flipCountLabel.font = .boldSystemFont(ofSize: UIRelated.regularFontSize.rawValue)
+            scoreCountLabel.font = .boldSystemFont(ofSize: UIRelated.regularFontSize.rawValue)
             labelStackView.axis = .vertical
             NSLayoutConstraint.activate(compactCompactConstraints)
             
@@ -197,9 +197,9 @@ class ViewController: UIViewController {
          
             //Adjusting restart button's, score and flip label's font size
             //Adjusting stack view, where we have count and score label, axis mode to vertical from horizontal
-            restartButton.titleLabel?.font = .boldSystemFont(ofSize: 30)
-            flipCountLabel.font = .boldSystemFont(ofSize: 25)
-            scoreCountLabel.font = .boldSystemFont(ofSize: 25)
+            restartButton.titleLabel?.font = .boldSystemFont(ofSize: UIRelated.regularFontSize.rawValue)
+            flipCountLabel.font = .boldSystemFont(ofSize: UIRelated.regularFontSize.rawValue)
+            scoreCountLabel.font = .boldSystemFont(ofSize: UIRelated.regularFontSize.rawValue)
             labelStackView.axis = .vertical
             NSLayoutConstraint.activate(regularConstraints)
         }
