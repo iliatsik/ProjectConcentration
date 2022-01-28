@@ -15,7 +15,6 @@
 		DC6DF208278586BE009B93D0 /* Concentration.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC6DF207278586BE009B93D0 /* Concentration.swift */; };
 		DC6DF20A278586F9009B93D0 /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC6DF209278586F9009B93D0 /* Card.swift */; };
 		DC6DF23527918D7E009B93D0 /* Int.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC6DF23427918D7E009B93D0 /* Int.swift */; };
-		DCC98E6B27996F4F002C7D06 /* Size+CGFloat.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCC98E6A27996F4F002C7D06 /* Size+CGFloat.swift */; };
 		DCD6877D27A27ED2007330CF /* ThemeRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCD6877C27A27ED2007330CF /* ThemeRepository.swift */; };
 		DCD6877F27A2967F007330CF /* ConcentrationPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCD6877E27A2967F007330CF /* ConcentrationPresenter.swift */; };
 /* End PBXBuildFile section */
@@ -31,7 +30,6 @@
 		DC6DF207278586BE009B93D0 /* Concentration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Concentration.swift; sourceTree = "<group>"; };
 		DC6DF209278586F9009B93D0 /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Card.swift; sourceTree = "<group>"; };
 		DC6DF23427918D7E009B93D0 /* Int.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Int.swift; sourceTree = "<group>"; };
-		DCC98E6A27996F4F002C7D06 /* Size+CGFloat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Size+CGFloat.swift"; sourceTree = "<group>"; };
 		DCD6877C27A27ED2007330CF /* ThemeRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeRepository.swift; sourceTree = "<group>"; };
 		DCD6877E27A2967F007330CF /* ConcentrationPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConcentrationPresenter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -125,7 +123,6 @@
 			isa = PBXGroup;
 			children = (
 				DC6DF23427918D7E009B93D0 /* Int.swift */,
-				DCC98E6A27996F4F002C7D06 /* Size+CGFloat.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -203,7 +200,6 @@
 				DC6DF1F727857E45009B93D0 /* ConcentrationViewController.swift in Sources */,
 				DC6DF208278586BE009B93D0 /* Concentration.swift in Sources */,
 				DC6DF20A278586F9009B93D0 /* Card.swift in Sources */,
-				DCC98E6B27996F4F002C7D06 /* Size+CGFloat.swift in Sources */,
 				DC6DF1F327857E45009B93D0 /* AppDelegate.swift in Sources */,
 				DC6DF1F527857E45009B93D0 /* SceneDelegate.swift in Sources */,
 				DC6DF23527918D7E009B93D0 /* Int.swift in Sources */,

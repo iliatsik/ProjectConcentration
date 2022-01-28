@@ -83,7 +83,7 @@ class ConcentrationViewController: UIViewController, ConcentrationPresenterDeleg
         let button = cardButtons[withIndex]
         if isFaceUp{
             button.setTitle(title, for: .normal)
-            button.titleLabel?.font = .systemFont(ofSize: UIRelated.labelFontSize.rawValue)
+            button.titleLabel?.font = .systemFont(ofSize: FontSize.big.rawValue)
             button.backgroundColor = UIColor(named: backgroundColor)
             button.isEnabled = false
         } else{
@@ -100,7 +100,7 @@ class ConcentrationViewController: UIViewController, ConcentrationPresenterDeleg
         scoreCountLabel.backgroundColor = UIColor(named: presenter.backgroundColor)
         flipCountLabel.backgroundColor = UIColor(named: presenter.backgroundColor)
         cardButtons.forEach { button in
-            button.layer.cornerRadius = UIRelated.buttonCornerRadius.rawValue
+            button.layer.cornerRadius = CornerRadiusSize.small.rawValue
             button.backgroundColor = UIColor(named: presenter.backgroundColor)
         }
   }
@@ -121,10 +121,10 @@ class ConcentrationViewController: UIViewController, ConcentrationPresenterDeleg
         let label = UILabel()
         label.backgroundColor = .orange
         label.layer.masksToBounds = true
-        label.layer.cornerRadius = UIRelated.buttonCornerRadius.rawValue
+        label.layer.cornerRadius = CornerRadiusSize.small.rawValue
         label.text = "Flips: 0"
         label.textAlignment = .center
-        label.font = .boldSystemFont(ofSize: UIRelated.boldFontSize.rawValue)
+        label.font = .boldSystemFont(ofSize: FontSize.regular.rawValue)
         label.textColor = .black
         return label
     }()
@@ -134,10 +134,10 @@ class ConcentrationViewController: UIViewController, ConcentrationPresenterDeleg
         let label = UILabel()
         label.backgroundColor = .orange
         label.layer.masksToBounds = true
-        label.layer.cornerRadius = UIRelated.buttonCornerRadius.rawValue
+        label.layer.cornerRadius = CornerRadiusSize.small.rawValue
         label.textAlignment = .center
         label.text = "Score: 0"
-        label.font = .boldSystemFont(ofSize: UIRelated.boldFontSize.rawValue)
+        label.font = .boldSystemFont(ofSize: FontSize.regular.rawValue)
         label.textColor = .black
         return label
     }()
@@ -147,12 +147,12 @@ class ConcentrationViewController: UIViewController, ConcentrationPresenterDeleg
         let button = UIButton()
         button.backgroundColor = .orange
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.layer.cornerRadius = UIRelated.buttonCornerRadius.rawValue
+        button.layer.cornerRadius = CornerRadiusSize.small.rawValue
         button.layer.masksToBounds = true
         button.setTitleColor(.black, for: .normal)
         button.setTitle("Restart", for: .normal)
         button.addTarget(self, action: #selector(restartAction(sender:)), for: .touchUpInside)
-        button.titleLabel?.font = .boldSystemFont(ofSize: UIRelated.boldFontSize.rawValue)
+        button.titleLabel?.font = .boldSystemFont(ofSize: FontSize.regular.rawValue)
         return button
     }()
     
@@ -162,7 +162,7 @@ class ConcentrationViewController: UIViewController, ConcentrationPresenterDeleg
         for _ in 0...19 {
             let button = UIButton()
             button.backgroundColor = .orange
-            button.layer.cornerRadius = UIRelated.labelCornerRadius.rawValue
+            button.layer.cornerRadius = CornerRadiusSize.regular.rawValue
             button.translatesAutoresizingMaskIntoConstraints = false
             button.layer.masksToBounds = true
             button.addTarget(self, action: #selector(buttonAction(sender:)), for: .touchUpInside)
@@ -261,9 +261,9 @@ class ConcentrationViewController: UIViewController, ConcentrationPresenterDeleg
             }
             
             //Adjusting restart button's, score and flip label's font size
-            restartButton.titleLabel?.font = .boldSystemFont(ofSize: UIRelated.boldFontSize.rawValue)
-            flipCountLabel.font = .boldSystemFont(ofSize: UIRelated.boldFontSize.rawValue)
-            scoreCountLabel.font = .boldSystemFont(ofSize: UIRelated.boldFontSize.rawValue)
+            restartButton.titleLabel?.font = .boldSystemFont(ofSize: FontSize.regular.rawValue)
+            flipCountLabel.font = .boldSystemFont(ofSize: FontSize.regular.rawValue)
+            scoreCountLabel.font = .boldSystemFont(ofSize: FontSize.regular.rawValue)
             NSLayoutConstraint.activate(compactConstraints)
             
         } else if (traitCollection.horizontalSizeClass == .compact && traitCollection.verticalSizeClass == .compact) {
@@ -275,9 +275,9 @@ class ConcentrationViewController: UIViewController, ConcentrationPresenterDeleg
 
             //Adjusting restart button's, score and flip label's font size
             //Adjusting stack view, where we have count and score label, axis mode to vertical from horizontal
-            restartButton.titleLabel?.font = .boldSystemFont(ofSize: UIRelated.regularFontSize.rawValue)
-            flipCountLabel.font = .boldSystemFont(ofSize: UIRelated.regularFontSize.rawValue)
-            scoreCountLabel.font = .boldSystemFont(ofSize: UIRelated.regularFontSize.rawValue)
+            restartButton.titleLabel?.font = .boldSystemFont(ofSize: FontSize.small.rawValue)
+            flipCountLabel.font = .boldSystemFont(ofSize: FontSize.small.rawValue)
+            scoreCountLabel.font = .boldSystemFont(ofSize: FontSize.small.rawValue)
             labelStackView.axis = .vertical
             NSLayoutConstraint.activate(compactCompactConstraints)
             
@@ -289,9 +289,9 @@ class ConcentrationViewController: UIViewController, ConcentrationPresenterDeleg
          
             //Adjusting restart button's, score and flip label's font size
             //Adjusting stack view, where we have count and score label, axis mode to vertical from horizontal
-            restartButton.titleLabel?.font = .boldSystemFont(ofSize: UIRelated.regularFontSize.rawValue)
-            flipCountLabel.font = .boldSystemFont(ofSize: UIRelated.regularFontSize.rawValue)
-            scoreCountLabel.font = .boldSystemFont(ofSize: UIRelated.regularFontSize.rawValue)
+            restartButton.titleLabel?.font = .boldSystemFont(ofSize: FontSize.small.rawValue)
+            flipCountLabel.font = .boldSystemFont(ofSize: FontSize.small.rawValue)
+            scoreCountLabel.font = .boldSystemFont(ofSize: FontSize.small.rawValue)
             labelStackView.axis = .vertical
             NSLayoutConstraint.activate(regularConstraints)
         }
@@ -375,5 +375,17 @@ class ConcentrationViewController: UIViewController, ConcentrationPresenterDeleg
             restartButton.widthAnchor.constraint(equalTo: labelStackView.widthAnchor)
         ])
     }
+    
+    enum CornerRadiusSize : CGFloat {
+        case regular = 18
+        case small = 12
+    }
+    
+    enum FontSize : CGFloat{
+        case big = 45
+        case regular = 35
+        case small = 25
+    }
+    
 }
 
