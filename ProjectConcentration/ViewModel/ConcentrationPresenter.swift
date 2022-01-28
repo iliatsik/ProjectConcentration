@@ -7,8 +7,6 @@
 
 import Foundation
 
-import Foundation
-
 protocol ConcentrationPresenterDelegate : AnyObject {
     func getCardButtonInfo(withIndex: Int, isFaceUp: Bool, isMatched: Bool, title: String, backgroundColor: String)
 }
