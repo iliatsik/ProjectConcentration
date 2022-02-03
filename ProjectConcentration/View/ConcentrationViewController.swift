@@ -8,8 +8,43 @@
 import UIKit
 
 
-class ConcentrationViewController: UIViewController, ConcentrationPresenterDelegate {
-  
+class ConcentrationViewController: UIViewController {
+    
+    enum CornerRadiusSize : CGFloat {
+        case regular = 18
+        case small = 12
+    }
+    
+    enum FontSize : CGFloat{
+        case large = 80
+        case big = 45
+        case regular = 35
+        case small = 25
+    }
+    
+    enum SpacingSize : CGFloat{
+        case small = 12.0
+        case regular = 20.0
+    }
+    
+    enum ElementQuantity : CGFloat{
+        case button = 20
+        case stackView = 5
+    }
+    
+    enum AutoLayoutConstant : CGFloat{
+        case constantSmall = -36
+        case constantRegular = -24
+        case constantBig = 36
+        case constantLarge = 48
+        case multiplierLittle = 0.2
+        case multiplierSmall = 0.25
+        case multiplierHalf = 0.5
+        case multiplierRegular = 0.65
+        case multiplierBig = 0.8
+        case multiplierLarge = 0.95
+    }
+    
     private var compactConstraints: [NSLayoutConstraint] = []
     private var regularConstraints: [NSLayoutConstraint] = []
     private var compactCompactConstraints: [NSLayoutConstraint] = []
@@ -17,105 +52,20 @@ class ConcentrationViewController: UIViewController, ConcentrationPresenterDeleg
     
     private let presenter = ConcentrationPresenter(themeRepository: ThemeRepository() )
     
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        self.view.backgroundColor = .black
-        //Set default index for new Game
-        presenter.setDefaultIndexOfNewGame()
-        //Set quantity of the Buttons, we are passing it to the Presenter
-        presenter.cardButtonQuantity = (cardButtons.count + 1) / 2
-        //Set Background Color and Emojis
-        presenter.setTheme()
-        interfaceImplementation()
-        buttonImplementation()
-        presenter.setViewDelegate(concentrationPresenterDelegate: self)
-    }
-    
     //Property observer for Count label
-    private var flipCount = 0 {
+    var flipCount = 0 {
         didSet{
             flipCountLabel.text = "Flips: \(flipCount)"
         }
     }
-
+    
     //Property observer for Score label
-    private var scoreCount = 0 {
+    var scoreCount = 0 {
         didSet {
             scoreCountLabel.text = "Score: \(scoreCount)"
         }
     }
-
-
-    @objc private func buttonAction(sender: UIButton!) {
-        flipCount += 1
-        //Checking if cardButton's index is nil or not
-        if let cardNumber = cardButtons.firstIndex(of: sender) {
-            //passing cardNumber to model Concentration, where we define score and check if it is facedUp or Matched
-            presenter.game.chooseCard(at: cardNumber)
-            //Its duty is to define UI, when it's faced up or it's not, implements emoji as title and background color
-            presenter.updateCardModel(cardButtonsRange: cardButtons.indices)
-            //Set score counter label to Model Concentration's scoreCount property
-            scoreCount = presenter.game.scoreCount
-        } else {
-            print("error")
-        }
-    }
     
-    @objc private func restartAction(sender: UIButton!) {
-        //Restarts game, removes emojis from the Array
-        presenter.restartGame()
-        //Re-implements number of cards
-        presenter.game = Concentration(numberOfPairsOfCard: (cardButtons.count + 1) / 2 )
-        //Its duty is to define UI, when it's faced up or it's not, implements emoji as title and background color
-        presenter.updateCardModel(cardButtonsRange: cardButtons.indices)
-        //Card Shuffle
-        presenter.game.shuffleCards()
-        //Re-implements background color for the Labels and Buttons
-        interfaceImplementation()
-        //Set Labels: Score and Flip to zero
-        flipCount = 0
-        scoreCount = 0
-    }
-       
-    func getCardButtonInfo(withIndex: Int, isFaceUp: Bool, isMatched: Bool, title: String, backgroundColor: String){
-        //We are passing this function with delegate, to receive the information about current button and set its properties
-        let button = cardButtons[withIndex]
-        if isFaceUp{
-            button.setTitle(title, for: .normal)
-            button.titleLabel?.font = .systemFont(ofSize: FontSize.big.rawValue)
-            button.backgroundColor = UIColor(named: backgroundColor)
-            button.isEnabled = false
-        } else{
-            button.setTitle("", for: .normal)
-            button.backgroundColor = isMatched ? .clear : UIColor(named: backgroundColor)
-            button.isEnabled = true
-            if button.backgroundColor == .clear { button.isEnabled = false }
-        }
-    }
-    
-    private func interfaceImplementation() {
-        //Set background color for Restart,Card Buttons and Flip,xScore Label
-        restartButton.backgroundColor = UIColor(named: presenter.backgroundColor)
-        scoreCountLabel.backgroundColor = UIColor(named: presenter.backgroundColor)
-        flipCountLabel.backgroundColor = UIColor(named: presenter.backgroundColor)
-        cardButtons.forEach { button in
-            button.layer.cornerRadius = CornerRadiusSize.small.rawValue
-            button.backgroundColor = UIColor(named: presenter.backgroundColor)
-        }
-  }
-   
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
-        configureAutoLayout()
-        
-        //Here we activate three types of contrainsts, which is compatible for all devices
-        NSLayoutConstraint.activate(regularConstraints)
-        NSLayoutConstraint.activate(compactConstraints)
-        NSLayoutConstraint.activate(compactCompactConstraints)
-        
-        layoutTrait(traitCollection: UIScreen.main.traitCollection)
-    }
     //Creating Count Label Programmatically
     private var flipCountLabel : UILabel = {
         let label = UILabel()
@@ -159,13 +109,13 @@ class ConcentrationViewController: UIViewController, ConcentrationPresenterDeleg
     //Creating 20 Card Button Programmatically
     private var cardButtons : [UIButton] = {
         var buttonArray = [UIButton]()
-        for _ in 0...19 {
+        for _ in 0...Int(ElementQuantity.button.rawValue - 1) {
             let button = UIButton()
             button.backgroundColor = .orange
             button.layer.cornerRadius = CornerRadiusSize.regular.rawValue
             button.translatesAutoresizingMaskIntoConstraints = false
             button.layer.masksToBounds = true
-            button.addTarget(self, action: #selector(buttonAction(sender:)), for: .touchUpInside)
+            button.addTarget(self, action: #selector(onCardButton(sender:)), for: .touchUpInside)
             button.setTitle("", for: .normal)
             buttonArray.append(button)
         }
@@ -177,7 +127,7 @@ class ConcentrationViewController: UIViewController, ConcentrationPresenterDeleg
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .horizontal
-        stackView.spacing = 20.0
+        stackView.spacing = SpacingSize.regular.rawValue
         stackView.alignment = .fill
         stackView.distribution = .fillEqually
         return stackView
@@ -188,7 +138,7 @@ class ConcentrationViewController: UIViewController, ConcentrationPresenterDeleg
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
-        stackView.spacing = 12.0
+        stackView.spacing = SpacingSize.small.rawValue
         stackView.alignment = .fill
         stackView.distribution = .fillEqually
         return stackView
@@ -197,11 +147,11 @@ class ConcentrationViewController: UIViewController, ConcentrationPresenterDeleg
     //Creating horizontal Stack views, where we put 4 card button
     private lazy var hStackView: [UIStackView] = {
         var stackViewArray = [UIStackView]()
-        for _ in 0...4{
+        for _ in 0...Int(ElementQuantity.stackView.rawValue - 1){
             let stackView = UIStackView()
             stackView.translatesAutoresizingMaskIntoConstraints = false
             stackView.axis = .horizontal
-            stackView.spacing = 12.0
+            stackView.spacing = SpacingSize.small.rawValue
             stackView.alignment = .fill
             stackView.distribution = .fillEqually
             stackViewArray.append(stackView)
@@ -209,47 +159,31 @@ class ConcentrationViewController: UIViewController, ConcentrationPresenterDeleg
         return stackViewArray
     }()
     
-    private func buttonImplementation(){
-        //Appending card in the stack view's and horizontal stack view in the vertical stack view
-       [self.cardButtons[0],
-        self.cardButtons[1],
-        self.cardButtons[2],
-        self.cardButtons[3]].forEach { hStackView[0].addArrangedSubview($0) }
-       
-       [self.cardButtons[4],
-        self.cardButtons[5],
-        self.cardButtons[6],
-        self.cardButtons[7]].forEach { hStackView[1].addArrangedSubview($0) }
-       
-       [self.cardButtons[8],
-        self.cardButtons[9],
-        self.cardButtons[10],
-        self.cardButtons[11]].forEach { hStackView[2].addArrangedSubview($0) }
-       
-       [self.cardButtons[12],
-        self.cardButtons[13],
-        self.cardButtons[14],
-        self.cardButtons[15]].forEach { hStackView[3].addArrangedSubview($0) }
-       
-       [self.cardButtons[16],
-        self.cardButtons[17],
-        self.cardButtons[18],
-        self.cardButtons[19]].forEach { hStackView[4].addArrangedSubview($0) }
-       
-       [self.hStackView[0],
-        self.hStackView[1],
-        self.hStackView[2],
-        self.hStackView[3],
-        self.hStackView[4]].forEach { vStackView.addArrangedSubview($0) }
-       
-       [self.scoreCountLabel,
-        self.flipCountLabel].forEach { labelStackView.addArrangedSubview($0)}
-   }
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.view.backgroundColor = .black
+        presenter.onViewDidLoad(cardButtonQuantity: (cardButtons.count + 1) / 2, concentrationPresenterDelegate: self)
+        configureBackgroundColor()
+        configureButton()
+    }
+    
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        configureAutoLayout()
+        
+        //Here we activate three types of contrainsts, which is compatible for all devices
+        NSLayoutConstraint.activate(regularConstraints)
+        NSLayoutConstraint.activate(compactConstraints)
+        NSLayoutConstraint.activate(compactCompactConstraints)
+        
+        layoutTrait(traitCollection: UIScreen.main.traitCollection)
+    }
+    
     
     private func layoutTrait(traitCollection:UITraitCollection) {
         
         if (traitCollection.horizontalSizeClass == .compact &&  traitCollection.verticalSizeClass == .regular) || (traitCollection.horizontalSizeClass == .regular &&
-            traitCollection.verticalSizeClass == .regular)  {
+                                                                                                                   traitCollection.verticalSizeClass == .regular)  {
             //Implementing auto layouts for iPhone's Portrait mode and iPad's Landscape and Portrait modes
             if regularConstraints.count > 0 && regularConstraints[0].isActive {
                 NSLayoutConstraint.deactivate(regularConstraints)
@@ -257,7 +191,7 @@ class ConcentrationViewController: UIViewController, ConcentrationPresenterDeleg
             }
             if traitCollection.horizontalSizeClass == .regular && traitCollection.horizontalSizeClass == .regular {
                 //Here we increasing font size of the cards for iPad
-                for index in 0...19 { cardButtons[index].titleLabel?.font = .boldSystemFont(ofSize: 80) }
+                for index in 0...Int(ElementQuantity.button.rawValue - 1) { cardButtons[index].titleLabel?.font = .boldSystemFont(ofSize: FontSize.large.rawValue) }
             }
             
             //Adjusting restart button's, score and flip label's font size
@@ -272,7 +206,7 @@ class ConcentrationViewController: UIViewController, ConcentrationPresenterDeleg
                 NSLayoutConstraint.deactivate(regularConstraints)
                 NSLayoutConstraint.deactivate(compactConstraints)
             }
-
+            
             //Adjusting restart button's, score and flip label's font size
             //Adjusting stack view, where we have count and score label, axis mode to vertical from horizontal
             restartButton.titleLabel?.font = .boldSystemFont(ofSize: FontSize.small.rawValue)
@@ -286,7 +220,7 @@ class ConcentrationViewController: UIViewController, ConcentrationPresenterDeleg
                 NSLayoutConstraint.deactivate(compactConstraints)
                 NSLayoutConstraint.deactivate(compactCompactConstraints)
             }
-         
+            
             //Adjusting restart button's, score and flip label's font size
             //Adjusting stack view, where we have count and score label, axis mode to vertical from horizontal
             restartButton.titleLabel?.font = .boldSystemFont(ofSize: FontSize.small.rawValue)
@@ -297,6 +231,90 @@ class ConcentrationViewController: UIViewController, ConcentrationPresenterDeleg
         }
     }
     
+}
+
+extension ConcentrationViewController : ConcentrationPresenterDelegate{
+    func getCardButtonInfo(withIndex: Int, isFaceUp: Bool, isMatched: Bool, title: String, backgroundColor: String){
+        //We are passing this function with delegate, to receive the information about current button and set its properties
+        let button = cardButtons[withIndex]
+        if isFaceUp{
+            button.setTitle(title, for: .normal)
+            button.titleLabel?.font = .systemFont(ofSize: FontSize.big.rawValue)
+            button.backgroundColor = UIColor(named: backgroundColor)
+            button.isEnabled = false
+        } else{
+            button.setTitle("", for: .normal)
+            button.backgroundColor = isMatched ? .clear : UIColor(named: backgroundColor)
+            button.isEnabled = true
+            if button.backgroundColor == .clear { button.isEnabled = false }
+        }
+    }
+}
+
+extension ConcentrationViewController{ //Private Functions
+    
+    @objc private func onCardButton(sender: UIButton!) {
+        //Checking if cardButton's index is nil or not
+        if let cardNumber = cardButtons.firstIndex(of: sender) {
+            presenter.onCardButton(cardNumber: cardNumber, indices: cardButtons.indices)
+        } else {
+            print("error")
+        }
+    }
+    
+    @objc private func restartAction(sender: UIButton!) {
+        presenter.onRestartButton(cardButtonQuantity: (cardButtons.count + 1) / 2, indices: cardButtons.indices)
+        configureBackgroundColor()
+    }
+    
+    private func configureBackgroundColor() {
+        //Set background color for Restart,Card Buttons and Flip,xScore Label
+        restartButton.backgroundColor = UIColor(named: presenter.backgroundColor)
+        scoreCountLabel.backgroundColor = UIColor(named: presenter.backgroundColor)
+        flipCountLabel.backgroundColor = UIColor(named: presenter.backgroundColor)
+        cardButtons.forEach { button in
+            button.layer.cornerRadius = CornerRadiusSize.small.rawValue
+            button.backgroundColor = UIColor(named: presenter.backgroundColor)
+        }
+    }
+    
+    private func configureButton(){
+        //Appending card in the stack view's and horizontal stack view in the vertical stack view
+        [self.cardButtons[0],
+         self.cardButtons[1],
+         self.cardButtons[2],
+         self.cardButtons[3]].forEach { hStackView[0].addArrangedSubview($0) }
+        
+        [self.cardButtons[4],
+         self.cardButtons[5],
+         self.cardButtons[6],
+         self.cardButtons[7]].forEach { hStackView[1].addArrangedSubview($0) }
+        
+        [self.cardButtons[8],
+         self.cardButtons[9],
+         self.cardButtons[10],
+         self.cardButtons[11]].forEach { hStackView[2].addArrangedSubview($0) }
+        
+        [self.cardButtons[12],
+         self.cardButtons[13],
+         self.cardButtons[14],
+         self.cardButtons[15]].forEach { hStackView[3].addArrangedSubview($0) }
+        
+        [self.cardButtons[16],
+         self.cardButtons[17],
+         self.cardButtons[18],
+         self.cardButtons[19]].forEach { hStackView[4].addArrangedSubview($0) }
+        
+        [self.hStackView[0],
+         self.hStackView[1],
+         self.hStackView[2],
+         self.hStackView[3],
+         self.hStackView[4]].forEach { vStackView.addArrangedSubview($0) }
+        
+        [self.scoreCountLabel,
+         self.flipCountLabel].forEach { labelStackView.addArrangedSubview($0)}
+    }
+    
     private func configureAutoLayout() {
         view.addSubview(vStackView)
         view.addSubview(labelStackView)
@@ -304,36 +322,36 @@ class ConcentrationViewController: UIViewController, ConcentrationPresenterDeleg
         
         regularConstraints.append(contentsOf: [
             /* For vertical stack view, we are using center x, which is defined as the view's quarter,
-            center y as view's center y, height is defined as 4/5 of the view's height,width as half
-            of the view's height */
+             center y as view's center y, height is defined as 4/5 of the view's height,width as half
+             of the view's height */
             vStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: view.frame.width / 4 - view.safeAreaInsets.right),
             vStackView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            vStackView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.8),
-            vStackView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.5),
+            vStackView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: AutoLayoutConstant.multiplierBig.rawValue),
+            vStackView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: AutoLayoutConstant.multiplierHalf.rawValue),
             
             /* For labelStackView, which is score and count label, center Y is defined as half greater than
              or equal of the view's center Y, right anchor is connected with verticalStackView, constant 24,
              left anchor is connected with view, constants 48, and width is quarter of the view */
-            labelStackView.centerYAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: view.centerYAnchor, multiplier: 0.5),
-            labelStackView.trailingAnchor.constraint(equalTo: vStackView.leadingAnchor, constant: -24),
-            labelStackView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.25),
+            labelStackView.centerYAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: view.centerYAnchor, multiplier: AutoLayoutConstant.multiplierHalf.rawValue),
+            labelStackView.trailingAnchor.constraint(equalTo: vStackView.leadingAnchor, constant: AutoLayoutConstant.constantRegular.rawValue),
+            labelStackView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: AutoLayoutConstant.multiplierSmall.rawValue),
             labelStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor,
-                                                    constant: 48),
+                                                    constant: AutoLayoutConstant.constantLarge.rawValue),
             
             /* Restart button's center X is connected with labelStackViews centerX, bottom corner is defined
              as verticalStackView bottom layout margin with constant 24, width is equal to label stack view's width */
             restartButton.centerXAnchor.constraint(equalTo: labelStackView.centerXAnchor),
-            restartButton.bottomAnchor.constraint(equalTo: vStackView.layoutMarginsGuide.bottomAnchor, constant: -24),
+            restartButton.bottomAnchor.constraint(equalTo: vStackView.layoutMarginsGuide.bottomAnchor, constant: AutoLayoutConstant.constantRegular.rawValue),
             restartButton.widthAnchor.constraint(equalTo: labelStackView.widthAnchor)
         ])
- 
+        
         compactConstraints.append(contentsOf: [
             /* For vertical stack view, we are using center x, which is defined as the view's center X,
-            center y as view's center y with constant: view's top safe area multiplied by two, height is defined as 65/100 of the view's height, width as the view's height with constant: view's top safe area */
+             center y as view's center y with constant: view's top safe area multiplied by two, height is defined as 65/100 of the view's height, width as the view's height with constant: view's top safe area */
             vStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             vStackView.centerYAnchor.constraint(equalTo: view.centerYAnchor,
                                                 constant: -(view.safeAreaInsets.top * 2)),
-            vStackView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.65),
+            vStackView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: AutoLayoutConstant.multiplierRegular.rawValue),
             vStackView.widthAnchor.constraint(equalTo: view.widthAnchor,
                                               constant: -(view.safeAreaInsets.top)),
             
@@ -349,24 +367,24 @@ class ConcentrationViewController: UIViewController, ConcentrationPresenterDeleg
             restartButton.bottomAnchor.constraint(equalTo:   view.bottomAnchor,
                                                   constant:  -(view.safeAreaInsets.top))
         ])
-
+        
         compactCompactConstraints.append(contentsOf: [
             /* For vertical stack view, we are using center x, which is defined as the view's quarter,
-            center y as view's center y, height is defined as 95/100 of the view's height,width as 65/100
-            of the view's height */
+             center y as view's center y, height is defined as 95/100 of the view's height,width as 65/100
+             of the view's height */
             vStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor,
                                                 constant: view.frame.width / 4),
             vStackView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            vStackView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.95),
-            vStackView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.65),
+            vStackView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: AutoLayoutConstant.multiplierLarge.rawValue),
+            vStackView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: AutoLayoutConstant.multiplierRegular.rawValue),
             
             /* For labelStackView, center Y is defined as half greater than
              or equal of the view's center Y, right anchor is connected with verticalStackView, constant 364,
              left anchor is connected with view, constants 36, and width is 1/5 of the view */
-            labelStackView.centerYAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: view.centerYAnchor, multiplier: 0.5),
-            labelStackView.trailingAnchor.constraint(equalTo: vStackView.leadingAnchor, constant: -36),
-            labelStackView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.2),
-            labelStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 36),
+            labelStackView.centerYAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: view.centerYAnchor, multiplier: AutoLayoutConstant.multiplierHalf.rawValue),
+            labelStackView.trailingAnchor.constraint(equalTo: vStackView.leadingAnchor, constant: AutoLayoutConstant.constantSmall.rawValue),
+            labelStackView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: AutoLayoutConstant.multiplierLittle.rawValue),
+            labelStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: AutoLayoutConstant.constantBig.rawValue),
             
             /* Restart button's center X is connected with labelStackViews centerX, bottom corner is defined
              as verticalStackView bottom layout margin with constant view's top safe area, width is equal to label stack view's width */
@@ -375,17 +393,4 @@ class ConcentrationViewController: UIViewController, ConcentrationPresenterDeleg
             restartButton.widthAnchor.constraint(equalTo: labelStackView.widthAnchor)
         ])
     }
-    
-    enum CornerRadiusSize : CGFloat {
-        case regular = 18
-        case small = 12
-    }
-    
-    enum FontSize : CGFloat{
-        case big = 45
-        case regular = 35
-        case small = 25
-    }
-    
 }
-

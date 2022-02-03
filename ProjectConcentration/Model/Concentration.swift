@@ -9,15 +9,23 @@ import Foundation
 
 class Concentration {
     
+    init(numberOfPairsOfCard : Int){
+        for _ in 0..<numberOfPairsOfCard {
+            let card = Card()
+            cardList += [card, card]
+        }
+        shuffleCards()
+    }
+    
     var cardList = [Card]()
     
-    var indexOfOneAndOnlyCard : Int?
-
+    private var indexOfOneAndOnlyCard : Int?
+    
     var scoreCount = 0
     
     func chooseCard(at index: Int){
         //It's a declaration of cards, we are implement these statements, while cards aren't matching, just to define the exact score
-
+        
         guard cardList[index].isMatched else {
             if let matchIndex = indexOfOneAndOnlyCard, matchIndex != index {
                 if cardList[matchIndex].identifier == cardList[index].identifier {
@@ -48,14 +56,6 @@ class Concentration {
     
     func shuffleCards() {
         cardList.shuffle()
-    }
-    
-    init(numberOfPairsOfCard : Int){
-        for _ in 0..<numberOfPairsOfCard {
-            let card = Card()
-            cardList += [card, card]
-        }
-        shuffleCards()
     }
     
 }
