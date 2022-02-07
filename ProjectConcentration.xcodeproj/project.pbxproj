@@ -14,6 +14,7 @@
 		DC6DF1FF27857E47009B93D0 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DC6DF1FD27857E47009B93D0 /* LaunchScreen.storyboard */; };
 		DC6DF208278586BE009B93D0 /* Concentration.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC6DF207278586BE009B93D0 /* Concentration.swift */; };
 		DC6DF20A278586F9009B93D0 /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC6DF209278586F9009B93D0 /* Card.swift */; };
+		DC78643C27B155A500D4DFA5 /* CollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC78643B27B155A500D4DFA5 /* CollectionViewCell.swift */; };
 		DCD6877D27A27ED2007330CF /* ThemeRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCD6877C27A27ED2007330CF /* ThemeRepository.swift */; };
 		DCD6877F27A2967F007330CF /* ConcentrationPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCD6877E27A2967F007330CF /* ConcentrationPresenter.swift */; };
 /* End PBXBuildFile section */
@@ -28,6 +29,7 @@
 		DC6DF20027857E47009B93D0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DC6DF207278586BE009B93D0 /* Concentration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Concentration.swift; sourceTree = "<group>"; };
 		DC6DF209278586F9009B93D0 /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Card.swift; sourceTree = "<group>"; };
+		DC78643B27B155A500D4DFA5 /* CollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewCell.swift; sourceTree = "<group>"; };
 		DCD6877C27A27ED2007330CF /* ThemeRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeRepository.swift; sourceTree = "<group>"; };
 		DCD6877E27A2967F007330CF /* ConcentrationPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConcentrationPresenter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -87,6 +89,7 @@
 		DC6DF20D2786E45F009B93D0 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				DC78643727B1521300D4DFA5 /* Cell */,
 				DC6DF1F627857E45009B93D0 /* ConcentrationViewController.swift */,
 			);
 			path = View;
@@ -122,6 +125,14 @@
 			children = (
 			);
 			path = Extensions;
+			sourceTree = "<group>";
+		};
+		DC78643727B1521300D4DFA5 /* Cell */ = {
+			isa = PBXGroup;
+			children = (
+				DC78643B27B155A500D4DFA5 /* CollectionViewCell.swift */,
+			);
+			path = Cell;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -196,6 +207,7 @@
 			files = (
 				DC6DF1F727857E45009B93D0 /* ConcentrationViewController.swift in Sources */,
 				DC6DF208278586BE009B93D0 /* Concentration.swift in Sources */,
+				DC78643C27B155A500D4DFA5 /* CollectionViewCell.swift in Sources */,
 				DC6DF20A278586F9009B93D0 /* Card.swift in Sources */,
 				DC6DF1F327857E45009B93D0 /* AppDelegate.swift in Sources */,
 				DC6DF1F527857E45009B93D0 /* SceneDelegate.swift in Sources */,

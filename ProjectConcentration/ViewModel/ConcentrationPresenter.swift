@@ -36,7 +36,7 @@ class ConcentrationPresenter{
     var backgroundColor = String()
     var defaultColor = "Black"
     
-    func onViewDidLoad(cardButtonQuantity: Int, concentrationPresenterDelegate: ConcentrationPresenterDelegate){
+    func onLoad(cardButtonQuantity: Int, concentrationPresenterDelegate: ConcentrationPresenterDelegate){
         self.concentrationPresenterDelegate = concentrationPresenterDelegate
         //Set default index for new Game
         setDefaultIndexOfNewGame()
