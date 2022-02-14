@@ -7,43 +7,46 @@
 
 import Foundation
 
-protocol ConcentrationPresenterDelegate : AnyObject {
-    func getCardButtonInfo(withIndex: Int, isFaceUp: Bool, isMatched: Bool, title: String, backgroundColor: String)
-    var flipCount : Int { get set }
-    var scoreCount : Int { get set }
+struct CardInfo {
+    var index = Int()
+    var title = String()
+    var backgroundColor = String()
 }
 
 class ConcentrationPresenter{
     
-    init(themeRepository: ThemeRepository){
+    init(themeRepository: ThemeRepository) {
         self.themeRepository = themeRepository
     }
-
-    weak private var concentrationPresenterDelegate : ConcentrationPresenterDelegate?
     
     private var themeRepository: ThemeRepository
     
     lazy var game = Concentration(numberOfPairsOfCard: cardButtonQuantity ?? 0)
-    
+    lazy var vc = ConcentrationViewController()
     //Quantity of the Buttons
-    var cardButtonQuantity : Int?
+    var cardButtonQuantity: Int?
     //Dictionary,there is index and emoji, we are passing it to the Model Concentration, with func(for card: Card) -> String
-    var emoji = [Int:String]()
+    var emoji = [Int : String]()
     //Current emojis
     var emojiChoices = [String]()
     //Quantity of emojis, it counts how many array do we have
-    var themeQuantity : Int?
+    var themeQuantity: Int?
     var backgroundColor = String()
     var defaultColor = "Black"
     
-    func onLoad(cardButtonQuantity: Int, concentrationPresenterDelegate: ConcentrationPresenterDelegate){
-        self.concentrationPresenterDelegate = concentrationPresenterDelegate
+    var scoreCount = 0
+    var flipCount = 0
+    
+    var cardInfo = [CardInfo]()
+    
+    func onLoad(cardButtonQuantity: Int ) {
         //Set default index for new Game
         setDefaultIndexOfNewGame()
         //Set quantity of the Buttons, we are passing it to the Presenter
         self.cardButtonQuantity = cardButtonQuantity
-        //Set Background Color and Emojis
         setTheme()
+        firstUpdateCardModel()
+        //Set Background Color and Emojis
     }
     
     func setTheme() { //Pass background color and emojis for UI
@@ -54,21 +57,21 @@ class ConcentrationPresenter{
         self.emojiChoices = emojiChoices
     }
     
-    func onCardButton(cardNumber: Int, indices: Range<Int>){
-        concentrationPresenterDelegate?.flipCount += 1
+    func onCardButton(cardNumber: Int) {
         //passing cardNumber to model Concentration, where we define score and check if it is facedUp or Matched
         game.chooseCard(at: cardNumber)
         //Its duty is to define UI, when it's faced up or it's not, implements emoji as title and background color
-        updateCardModel(cardButtonsRange: indices)
+        updateCardModel()
         //Set score counter label to Model Concentration's scoreCount property
-        concentrationPresenterDelegate?.scoreCount = game.scoreCount
+        scoreCount = game.scoreCount
+        if !game.cardList[cardNumber].isMatched { flipCount += 1 }
     }
     
-    func setDefaultIndexOfNewGame(){
+    func setDefaultIndexOfNewGame() {
         themeQuantity = Int.random(in: 0..<themeRepository.emojiForTheme.count ) //Initializing random integer for new game from the theme array
     }
     
-    func emoji(for card: Card) -> String{
+    func emoji(for card: Card) -> String {
         if emoji[card.identifier] == nil, emojiChoices.count > 0 {
             //Assigns emojis to cards and removes that emojis from the current array
             let randomIndex = Int.random(in: 0..<emojiChoices.count)
@@ -77,29 +80,29 @@ class ConcentrationPresenter{
         return emoji[card.identifier] ?? "?"
     }
     
+    func firstUpdateCardModel() {
+        for index in Constants.indices {
+            cardInfo.append(.init(index: index,
+                                  title: "",
+                                  backgroundColor: backgroundColor ))
+        }
+    }
     
-    func updateCardModel(cardButtonsRange: Range<Int>){
+    func updateCardModel() {
         //We are getting indices of the cardButtons and implementing its condition
-        for index in cardButtonsRange {
+        for index in Constants.indices {
             let card = game.cardList[index]
-
-            if card.isFaceUp{
-                concentrationPresenterDelegate?.getCardButtonInfo(withIndex: index,
-                                                                  isFaceUp: true,
-                                                                  isMatched: card.isMatched,
-                                                                  title: emoji(for: card),
-                                                                  backgroundColor: defaultColor)
-            }else{
-                concentrationPresenterDelegate?.getCardButtonInfo(withIndex: index,
-                                                                  isFaceUp: false,
-                                                                  isMatched: card.isMatched,
-                                                                  title: "",
-                                                                  backgroundColor: backgroundColor)
+            cardInfo[index].index = index
+            cardInfo[index].title = card.isFaceUp ? emoji(for: card) : ""
+            cardInfo[index].backgroundColor = card.isFaceUp ? defaultColor : backgroundColor
+            if card.isMatched {
+                cardInfo[index].backgroundColor = defaultColor;
+                cardInfo[index].title = ""
             }
         }
     }
     
-    func onRestartButton(cardButtonQuantity: Int, indices: Range<Int>){
+    func onRestartButton(cardButtonQuantity: Int) {
         //Set default index for new Game
         setDefaultIndexOfNewGame()
         //Removes past identifier, boolean isMatched, isFaceUp and cardFlipCounter
@@ -111,12 +114,11 @@ class ConcentrationPresenter{
         //Re-implements number of cards
         game = Concentration(numberOfPairsOfCard: cardButtonQuantity)
         //Its duty is to define UI, when it's faced up or it's not, implements emoji as title and background color
-        updateCardModel(cardButtonsRange: indices)
+        updateCardModel()
         //Card Shuffle
         game.shuffleCards()
         //Re-implements background color for the Labels and Buttons
-        concentrationPresenterDelegate?.flipCount = 0
-        concentrationPresenterDelegate?.scoreCount = 0
+        flipCount = 0
+        scoreCount = 0
     }
-  
 }
