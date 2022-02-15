@@ -17,7 +17,7 @@ class Concentration {
         shuffleCards()
     }
     
-    var cardList = [Card]()
+    var cardList: [Card] = []
     
     private var indexOfOneAndOnlyCard : Int?
     

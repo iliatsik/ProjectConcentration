@@ -26,9 +26,9 @@ class ConcentrationPresenter{
     //Quantity of the Buttons
     var cardButtonQuantity: Int?
     //Dictionary,there is index and emoji, we are passing it to the Model Concentration, with func(for card: Card) -> String
-    var emoji = [Int : String]()
+    var emoji: [Int : String] = [:]
     //Current emojis
-    var emojiChoices = [String]()
+    var emojiChoices: [String] = []
     //Quantity of emojis, it counts how many array do we have
     var themeQuantity: Int?
     var backgroundColor = String()
@@ -37,7 +37,7 @@ class ConcentrationPresenter{
     var scoreCount = 0
     var flipCount = 0
     
-    var cardInfo = [CardInfo]()
+    var cardInfoList: [CardInfo] = []
     
     func onLoad(cardButtonQuantity: Int ) {
         //Set default index for new Game
@@ -82,7 +82,7 @@ class ConcentrationPresenter{
     
     func firstUpdateCardModel() {
         for index in Constants.indices {
-            cardInfo.append(.init(index: index,
+            cardInfoList.append(.init(index: index,
                                   title: "",
                                   backgroundColor: backgroundColor ))
         }
@@ -92,12 +92,12 @@ class ConcentrationPresenter{
         //We are getting indices of the cardButtons and implementing its condition
         for index in Constants.indices {
             let card = game.cardList[index]
-            cardInfo[index].index = index
-            cardInfo[index].title = card.isFaceUp ? emoji(for: card) : ""
-            cardInfo[index].backgroundColor = card.isFaceUp ? defaultColor : backgroundColor
+            cardInfoList[index].index = index
+            cardInfoList[index].title = card.isFaceUp ? emoji(for: card) : ""
+            cardInfoList[index].backgroundColor = card.isFaceUp ? defaultColor : backgroundColor
             if card.isMatched {
-                cardInfo[index].backgroundColor = defaultColor;
-                cardInfo[index].title = ""
+                cardInfoList[index].backgroundColor = defaultColor;
+                cardInfoList[index].title = ""
             }
         }
     }

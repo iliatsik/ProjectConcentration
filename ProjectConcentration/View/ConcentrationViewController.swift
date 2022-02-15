@@ -19,13 +19,14 @@ enum Constants {
     static let CornerRadiusSmall: CGFloat = 12.0
 }
 
-class ConcentrationViewController: UIViewController {
+class ConcentrationViewController: UIViewController, CollectionViewCellDelegate {
     
     private var constraints: [NSLayoutConstraint] = []
     private let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
     private var collectionView : UICollectionView?
     private let presenter = ConcentrationPresenter(themeRepository: ThemeRepository() )
-
+    private let cell = CollectionViewCell()
+    
     //Creating Count Label Programmatically
     private var flipCountTitle : UILabel = {
         let label = UILabel()
@@ -39,7 +40,7 @@ class ConcentrationViewController: UIViewController {
     }()
     
     //Creating Score Label Programmatically
-     private var scoreCountTitle : UILabel = {
+    private var scoreCountTitle : UILabel = {
         let label = UILabel()
         label.backgroundColor = .orange
         label.layer.masksToBounds = true
@@ -59,11 +60,11 @@ class ConcentrationViewController: UIViewController {
         button.layer.masksToBounds = true
         button.setTitleColor(.black, for: .normal)
         button.setTitle("Restart", for: .normal)
-        button.addTarget(self, action: #selector(restartAction(sender:)), for: .touchUpInside)
+        button.addTarget(self, action: #selector(restartAction), for: .touchUpInside)
         button.titleLabel?.font = .boldSystemFont(ofSize: Constants.FontSizeRegular)
         return button
     }()
-
+    
     //Creating Stack View for Score and Count label Programmatically
     private lazy var labelStackView: UIStackView = {
         let stackView = UIStackView()
@@ -100,13 +101,13 @@ class ConcentrationViewController: UIViewController {
 
 extension ConcentrationViewController { //Private Functions
     
-    @objc private func onCardButton(sender: UIButton) {
-        presenter.onCardButton(cardNumber: sender.tag)
+    func onCardButton(index: Int) {
+        presenter.onCardButton(cardNumber: index)
         configureCounterLabels()
         collectionView?.reloadData()
     }
     
-    @objc private func restartAction(sender: UIButton) {
+    @objc private func restartAction() {
         presenter.onRestartButton(cardButtonQuantity: Constants.buttonCount / 2)
         configureCounterLabels()
         configureBackgroundColor()
@@ -129,7 +130,7 @@ extension ConcentrationViewController { //Private Functions
         
         collectionView = UICollectionView(frame: self.view.frame, collectionViewLayout: layout)
         guard let collectionView = collectionView else { return }
-
+        
         collectionView.register(CollectionViewCell.self, forCellWithReuseIdentifier: String(describing: CollectionViewCell.self) )
         collectionView.backgroundColor = UIColor.black
         collectionView.translatesAutoresizingMaskIntoConstraints = false
@@ -139,15 +140,15 @@ extension ConcentrationViewController { //Private Functions
     
     private func configureCollectionViewLayout() {
         guard let collectionView = collectionView else { return }
-   
-            layout.itemSize = CGSize(width:collectionView.collectionViewLayout.collectionViewContentSize.width / 4 -
-                                     collectionView.collectionViewLayout.collectionViewContentSize.width / 28,
-                                     height: collectionView.collectionViewLayout.collectionViewContentSize.width / 4.6)
-
-            let contentHeight: CGFloat = collectionView.frame.size.height
-            let cellHeight: CGFloat = layout.itemSize.height * 5
-            let cellSpacing: CGFloat = 10 * 4
-            collectionView.contentInset = UIEdgeInsets(top: (contentHeight - cellHeight - cellSpacing) / 2, left: 0, bottom: 0, right: 0)
+        
+        layout.itemSize = CGSize(
+            width: collectionView.frame.size.width / 4.5,
+            height: collectionView.frame.size.height / 5.5)
+        
+        let contentHeight: CGFloat = collectionView.frame.size.height
+        let cellHeight: CGFloat = layout.itemSize.height * 5
+        let cellSpacing: CGFloat = 10 * 4
+        collectionView.contentInset = UIEdgeInsets(top: (contentHeight - cellHeight - cellSpacing) / 2, left: 0, bottom: 0, right: 0)
     }
     
     private func configureLabelStackView() {
@@ -166,10 +167,10 @@ extension ConcentrationViewController { //Private Functions
              center y as view's center y with constant: view's top safe area multiplied by two, height is defined as 65/100 of the view's height, width as the view's height with constant: view's top safe area */
             collectionView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             collectionView.centerYAnchor.constraint(equalTo: view.centerYAnchor,
-                                                constant: -(view.safeAreaInsets.top * 2)),
+                                                    constant: -(view.safeAreaInsets.top * 2)),
             collectionView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.65),
             collectionView.widthAnchor.constraint(equalTo: view.widthAnchor,
-                                              constant: -(view.safeAreaInsets.top)),
+                                                  constant: -(view.safeAreaInsets.top)),
             
             /* For labelStackView, top anchor is connected with Collection View's bottom anchor,
              width is equal to the Collection View, center X is defined as view's center X */
@@ -194,12 +195,11 @@ extension ConcentrationViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: CollectionViewCell.self), for: indexPath) as? CollectionViewCell else { return UICollectionViewCell.init() }
-        cell.button.addTarget(self, action: #selector(onCardButton(sender:)), for: .touchUpInside)
         
-        cell.configure(backgroundColor: presenter.cardInfo[indexPath.row].backgroundColor,
-                       title: presenter.cardInfo[indexPath.row].title,
-                       tag: indexPath.row)
-
+        cell.configure(delegate: self,
+                       cardInfo: presenter.cardInfoList[indexPath.row],
+                       at: indexPath.row)
+        
         return cell
     }
 }

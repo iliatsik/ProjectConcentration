@@ -7,9 +7,14 @@
 
 import UIKit
 
+protocol CollectionViewCellDelegate: AnyObject {
+    func onCardButton(index: Int)
+}
 
 class CollectionViewCell: UICollectionViewCell {
 
+    weak var delegate: CollectionViewCellDelegate?
+    
     var button : UIButton = {
         let button = UIButton()
         button.layer.cornerRadius = Constants.CornerRadiusRegular
@@ -32,10 +37,16 @@ class CollectionViewCell: UICollectionViewCell {
         super.layoutSubviews()
         button.frame = contentView.bounds
     }
-
-    func configure(backgroundColor: String, title: String, tag: Int) {
-        button.backgroundColor = UIColor(named: backgroundColor)
-        button.setTitle(title, for: .normal)
-        button.tag = tag
+    
+    func configure(delegate: CollectionViewCellDelegate, cardInfo: CardInfo, at index: Int) {
+        self.delegate = delegate
+        button.backgroundColor = UIColor(named: cardInfo.backgroundColor)
+        button.setTitle(cardInfo.title, for: .normal)
+        button.tag = index
+        button.addTarget(self, action: #selector(onCardButton), for: .touchUpInside)
+    }
+    
+    @objc private func onCardButton() {
+        delegate?.onCardButton(index: button.tag)
     }
 }
