@@ -25,7 +25,6 @@ class ConcentrationViewController: UIViewController, CollectionViewCellDelegate 
     private let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
     private var collectionView : UICollectionView?
     private let presenter = ConcentrationPresenter(themeRepository: ThemeRepository() )
-    private let cell = CollectionViewCell()
     
     //Creating Count Label Programmatically
     private var flipCountTitle : UILabel = {
